@@ -1,0 +1,15 @@
+{
+    "name": "rindow/rindow-clblast-dev",
+    "type": "project",
+    "description": "CLBlast for PHP. Tuned OpenCL BLAS.",
+    "keywords": ["rindow","opencl","gpu","math","blas"],
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": ">=7.2",
+        "interop-phpobjects/polite-math": ">=1.0.3",
+        "ext-rindow_opencl": "0.1.0"
+    },
+    "require-dev": {
+        "ext-rindow_openblas": "0.1.6"
+    }
+}

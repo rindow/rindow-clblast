@@ -1,0 +1,63 @@
+// vim:ft=javascript
+
+ARG_ENABLE('rindow_clblast', 'rindow_clblast support', 'no');
+
+ARG_WITH('opencl', 'opencl support', 'no');
+ARG_WITH('clblast', 'clblast support', 'no');
+ARG_WITH('rindow_opencl', 'rindow_opencl support', 'no');
+
+if (PHP_RINDOW_CLBLAST != 'no') {
+  var PHP_RINDOW_CLBLAST_CFLAGS="\
+    /DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 \
+    /I" + configure_module_dirname + " \
+  ";
+  if(CHECK_HEADER_ADD_INCLUDE("CL/opencl.h", "rindow_clblast", PHP_OPENCL + '/include')) {
+    PHP_RINDOW_CLBLAST_CFLAGS = PHP_RINDOW_CLBLAST_CFLAGS + "\
+        /I" + PHP_OPENCL + "/include \
+    ";
+  } else {
+    ERROR("NOT FOUND: OpenCL header files. Please set --with-opencl=/some/directory/path");
+  }
+  if(CHECK_HEADER_ADD_INCLUDE("clblast_c.h", "rindow_clblast", PHP_CLBLAST + '/include')) {
+    PHP_RINDOW_CLBLAST_CFLAGS = PHP_RINDOW_CLBLAST_CFLAGS + "\
+        /I" + PHP_CLBLAST + "/include \
+    ";
+  } else {
+    ERROR("NOT FOUND: CLBlast header files. Please set --with-clblast=/some/directory/path");
+  }
+  if(CHECK_HEADER_ADD_INCLUDE("Rindow/OpenCL/Buffer.h", "rindow_clblast", PHP_RINDOW_OPENCL + '/include')) {
+    PHP_RINDOW_CLBLAST_CFLAGS = PHP_RINDOW_CLBLAST_CFLAGS + "\
+        /I" + PHP_RINDOW_OPENCL + "/include \
+    ";
+  } else {
+      ERROR("NOT FOUND: Rindow-OpenCL header files. Please set --with-rindow_opencl=/rindow_opencl/source/directory/path");
+  }
+  if(CHECK_HEADER_ADD_INCLUDE("Interop/Polite/Math/Matrix.h", "rindow_clblast", configure_module_dirname + '/vendor/interop-phpobjects/polite-math/include')) {
+    PHP_RINDOW_CLBLAST_CFLAGS = PHP_RINDOW_CLBLAST_CFLAGS + "\
+        /I" + configure_module_dirname + "/vendor/interop-phpobjects/polite-math/include \
+    ";
+  } else {
+      ERROR("NOT FOUND: LinearBuffer interface header files. Please execute \"composer update\" on development directory.");
+  }
+
+	// Condense whitespace in CFLAGS
+  PHP_RINDOW_CLBLAST_CFLAGS = PHP_RINDOW_CLBLAST_CFLAGS.replace(/\s+/g, ' ');
+
+  AC_DEFINE('HAVE_RINDOW_OPENCL', 1, 'rindow_clblast support enabled');
+
+  EXTENSION('rindow_clblast', 'rindow_clblast.c', null, PHP_RINDOW_CLBLAST_CFLAGS);
+  ADD_SOURCES(configure_module_dirname + "/src/Rindow/CLBlast", " Blas.c Math.c", "rindow_clblast");
+  if (CHECK_LIB("OpenCL.lib", "rindow_clblast", PHP_OPENCL + '/lib')) {
+      ADD_FLAG("LIBS_OPENCL", "OpenCL.lib");
+      ADD_FLAG("LDFLAGS", '/libpath:"\\"' + PHP_OPENCL + '/lib' + '\\"" ');
+  } else {
+      ERROR("NOT FOUND: OpenCL library. Please copy OpenCL.lib to opencl sdk directory with --with-opencl=/some/dir");
+  }
+  if (CHECK_LIB("clblast.lib", "rindow_clblast", PHP_CLBLAST + '/lib')) {
+      ADD_FLAG("LIBS_CLBLAST", "clblast.lib");
+      ADD_FLAG("LDFLAGS", '/libpath:"\\"' + PHP_CLBLAST + '/lib' + '\\"" ');
+  } else {
+      ERROR("NOT FOUND: CLBlast library. Please set CLBlast sdk directory with --with-clblast=/some/dir");
+  }
+
+}
