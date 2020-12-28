@@ -10,6 +10,6 @@
         "ext-rindow_opencl": "0.1.0"
     },
     "require-dev": {
-        "ext-rindow_openblas": "0.1.6"
+        "ext-rindow_openblas": ">=0.1.6"
     }
 }

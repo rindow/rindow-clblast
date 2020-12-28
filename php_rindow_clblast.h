@@ -5,7 +5,7 @@
 
 # define phpext_rindow_clblast_ptr &rindow_clblast_module_entry
 
-# define PHP_RINDOW_CLBLAST_VERSION "0.1.0"
+# define PHP_RINDOW_CLBLAST_VERSION "0.1.1"
 
 # if defined(ZTS) && defined(COMPILE_DL_RINDOW_CLBLAST)
 ZEND_TSRMLS_CACHE_EXTERN()

@@ -996,6 +996,578 @@ static PHP_METHOD(Blas, gemm)
 }
 /* }}} */
 
+/* Method Rindow\CLBlast\Blas::
+    public function symm(
+        int $order,
+        int $side,
+        int $uplo,
+        int $m,
+        int $n,
+        float $alpha,
+        Buffer $A, int $offsetA, int $ldA,
+        Buffer $B, int $offsetB, int $ldB,
+        float $beta,
+        Buffer $C, int $offsetC, int $ldC,
+        CommandQueue $queue, EventList $event
+     ) : void
+ {{{ */
+static PHP_METHOD(Blas, symm)
+{
+    zend_long order;
+    zend_long side;
+    zend_long uplo;
+    zend_long m;
+    zend_long n;
+    double alpha;
+    zval* a_obj_p;
+    zend_long offsetA;
+    zend_long ldA;
+    zval* b_obj_p;
+    zend_long offsetB;
+    zend_long ldB;
+    double beta;
+    zval* c_obj_p;
+    zend_long offsetC;
+    zend_long ldC;
+    zval* queue_obj_p;
+    zval* event_obj_p=NULL;
+    php_rindow_opencl_buffer_t* bufferA;
+    php_rindow_opencl_buffer_t* bufferB;
+    php_rindow_opencl_buffer_t* bufferC;
+    php_rindow_opencl_command_queue_t* queue_obj;
+    CLBlastStatusCode status;
+    cl_event event;
+    cl_event *event_p=NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 17, 18)
+        Z_PARAM_LONG(order)
+        Z_PARAM_LONG(side)
+        Z_PARAM_LONG(uplo)
+        Z_PARAM_LONG(m)
+        Z_PARAM_LONG(n)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetA)
+        Z_PARAM_LONG(ldA)
+        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetB)
+        Z_PARAM_LONG(ldB)
+        Z_PARAM_DOUBLE(beta)
+        Z_PARAM_ZVAL(c_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetC)
+        Z_PARAM_LONG(ldC)
+        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+    ZEND_PARSE_PARAMETERS_END();
+
+    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    bufferC = Z_RINDOW_OPENCL_BUFFER_OBJ_P(c_obj_p);
+    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_p = &event;
+    }
+
+    if(bufferA->dtype!=bufferB->dtype || bufferB->dtype!=bufferC->dtype) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B and C", 0);
+        return;
+    }
+    switch (bufferA->dtype) {
+        case php_interop_polite_math_matrix_dtype_float32:
+            status = CLBlastSsymm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (size_t)m, (size_t)n,
+                (float)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                (float)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        case php_interop_polite_math_matrix_dtype_float64:
+            status = CLBlastDsymm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (size_t)m, (size_t)n,
+                (double)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                (double)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        default:
+            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
+            return;
+    }
+    if(status!=CLBlastSuccess) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?symm error=%d", status);
+        return;
+    }
+
+    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
+        return;
+    }
+}
+/* }}} */
+
+/* Method Rindow\CLBlast\Blas::
+    public function syrk(
+        int $order,
+        int $uplo,
+        int $trans,
+        int $n,
+        int $k,
+        float $alpha,
+        Buffer $A, int $offsetA, int $ldA,
+        float $beta,
+        Buffer $C, int $offsetC, int $ldC,
+        CommandQueue $queue, EventList $event
+     ) : void
+ {{{ */
+static PHP_METHOD(Blas, syrk)
+{
+    zend_long order;
+    zend_long uplo;
+    zend_long trans;
+    zend_long n;
+    zend_long k;
+    double alpha;
+    zval* a_obj_p;
+    zend_long offsetA;
+    zend_long ldA;
+    double beta;
+    zval* c_obj_p;
+    zend_long offsetC;
+    zend_long ldC;
+    zval* queue_obj_p;
+    zval* event_obj_p=NULL;
+    php_rindow_opencl_buffer_t* bufferA;
+    php_rindow_opencl_buffer_t* bufferC;
+    php_rindow_opencl_command_queue_t* queue_obj;
+    CLBlastStatusCode status;
+    cl_event event;
+    cl_event *event_p=NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 14, 15)
+        Z_PARAM_LONG(order)
+        Z_PARAM_LONG(uplo)
+        Z_PARAM_LONG(trans)
+        Z_PARAM_LONG(n)
+        Z_PARAM_LONG(k)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetA)
+        Z_PARAM_LONG(ldA)
+        Z_PARAM_DOUBLE(beta)
+        Z_PARAM_ZVAL(c_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetC)
+        Z_PARAM_LONG(ldC)
+        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+    ZEND_PARSE_PARAMETERS_END();
+
+    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    bufferC = Z_RINDOW_OPENCL_BUFFER_OBJ_P(c_obj_p);
+    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_p = &event;
+    }
+
+    if(bufferA->dtype!=bufferC->dtype) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B and C", 0);
+        return;
+    }
+    switch (bufferA->dtype) {
+        case php_interop_polite_math_matrix_dtype_float32:
+            status = CLBlastSsyrk(
+                (CLBlastLayout)order,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (size_t)n, (size_t)k,
+                (float)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                (float)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        case php_interop_polite_math_matrix_dtype_float64:
+            status = CLBlastDsyrk(
+                (CLBlastLayout)order,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (size_t)n, (size_t)k,
+                (double)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                (double)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        default:
+            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
+            return;
+    }
+    if(status!=CLBlastSuccess) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?syrk error=%d", status);
+        return;
+    }
+
+    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
+        return;
+    }
+}
+/* }}} */
+
+/* Method Rindow\CLBlast\Blas::
+    public function syr2k(
+        int $order,
+        int $uplo,
+        int $trans,
+        int $n,
+        int $k,
+        float $alpha,
+        Buffer $A, int $offsetA, int $ldA,
+        Buffer $B, int $offsetB, int $ldB,
+        float $beta,
+        Buffer $C, int $offsetC, int $ldC,
+        CommandQueue $queue, EventList $event
+     ) : void
+ {{{ */
+static PHP_METHOD(Blas, syr2k)
+{
+    zend_long order;
+    zend_long uplo;
+    zend_long trans;
+    zend_long n;
+    zend_long k;
+    double alpha;
+    zval* a_obj_p;
+    zend_long offsetA;
+    zend_long ldA;
+    zval* b_obj_p;
+    zend_long offsetB;
+    zend_long ldB;
+    double beta;
+    zval* c_obj_p;
+    zend_long offsetC;
+    zend_long ldC;
+    zval* queue_obj_p;
+    zval* event_obj_p=NULL;
+    php_rindow_opencl_buffer_t* bufferA;
+    php_rindow_opencl_buffer_t* bufferB;
+    php_rindow_opencl_buffer_t* bufferC;
+    php_rindow_opencl_command_queue_t* queue_obj;
+    CLBlastStatusCode status;
+    cl_event event;
+    cl_event *event_p=NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 17, 18)
+        Z_PARAM_LONG(order)
+        Z_PARAM_LONG(uplo)
+        Z_PARAM_LONG(trans)
+        Z_PARAM_LONG(n)
+        Z_PARAM_LONG(k)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetA)
+        Z_PARAM_LONG(ldA)
+        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetB)
+        Z_PARAM_LONG(ldB)
+        Z_PARAM_DOUBLE(beta)
+        Z_PARAM_ZVAL(c_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetC)
+        Z_PARAM_LONG(ldC)
+        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+    ZEND_PARSE_PARAMETERS_END();
+
+    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    bufferC = Z_RINDOW_OPENCL_BUFFER_OBJ_P(c_obj_p);
+    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_p = &event;
+    }
+
+    if(bufferA->dtype!=bufferB->dtype || bufferB->dtype!=bufferC->dtype) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B and C", 0);
+        return;
+    }
+    switch (bufferA->dtype) {
+        case php_interop_polite_math_matrix_dtype_float32:
+            status = CLBlastSsyr2k(
+                (CLBlastLayout)order,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (size_t)n, (size_t)k,
+                (float)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                (float)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        case php_interop_polite_math_matrix_dtype_float64:
+            status = CLBlastDsyr2k(
+                (CLBlastLayout)order,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (size_t)n, (size_t)k,
+                (double)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                (double)beta,
+                bufferC->buffer, (size_t)offsetC, (size_t)ldC,
+                &(queue_obj->command_queue), event_p);
+            break;
+        default:
+            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
+            return;
+    }
+    if(status!=CLBlastSuccess) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?syr2k error=%d", status);
+        return;
+    }
+
+    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
+        return;
+    }
+}
+/* }}} */
+
+/* Method Rindow\CLBlast\Blas::
+    public function trmm(
+        int $order,
+        int $side,
+        int $uplo,
+        int $trans,
+        int $diag,
+        int $m,
+        int $n,
+        float $alpha,
+        Buffer $A, int $offsetA, int $ldA,
+        Buffer $B, int $offsetB, int $ldB,
+        CommandQueue $queue, EventList $event
+     ) : void
+ {{{ */
+static PHP_METHOD(Blas, trmm)
+{
+    zend_long order;
+    zend_long side;
+    zend_long uplo;
+    zend_long trans;
+    zend_long diag;
+    zend_long m;
+    zend_long n;
+    double alpha;
+    zval* a_obj_p;
+    zend_long offsetA;
+    zend_long ldA;
+    zval* b_obj_p;
+    zend_long offsetB;
+    zend_long ldB;
+    zval* queue_obj_p;
+    zval* event_obj_p=NULL;
+    php_rindow_opencl_buffer_t* bufferA;
+    php_rindow_opencl_buffer_t* bufferB;
+    php_rindow_opencl_command_queue_t* queue_obj;
+    CLBlastStatusCode status;
+    cl_event event;
+    cl_event *event_p=NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 15, 16)
+        Z_PARAM_LONG(order)
+        Z_PARAM_LONG(side)
+        Z_PARAM_LONG(uplo)
+        Z_PARAM_LONG(trans)
+        Z_PARAM_LONG(diag)
+        Z_PARAM_LONG(m)
+        Z_PARAM_LONG(n)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetA)
+        Z_PARAM_LONG(ldA)
+        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetB)
+        Z_PARAM_LONG(ldB)
+        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+    ZEND_PARSE_PARAMETERS_END();
+
+    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_p = &event;
+    }
+
+    if(bufferA->dtype!=bufferB->dtype) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B and C", 0);
+        return;
+    }
+    switch (bufferA->dtype) {
+        case php_interop_polite_math_matrix_dtype_float32:
+            status = CLBlastStrmm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (CLBlastDiagonal)diag,
+                (size_t)m, (size_t)n,
+                (float)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                &(queue_obj->command_queue), event_p);
+            break;
+        case php_interop_polite_math_matrix_dtype_float64:
+            status = CLBlastDtrmm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (CLBlastDiagonal)diag,
+                (size_t)m, (size_t)n,
+                (double)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                &(queue_obj->command_queue), event_p);
+            break;
+        default:
+            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
+            return;
+    }
+    if(status!=CLBlastSuccess) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?trmm error=%d", status);
+        return;
+    }
+
+    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
+        return;
+    }
+}
+/* }}} */
+
+/* Method Rindow\CLBlast\Blas::
+    public function trsm(
+        int $order,
+        int $side,
+        int $uplo,
+        int $trans,
+        int $diag,
+        int $m,
+        int $n,
+        float $alpha,
+        Buffer $A, int $offsetA, int $ldA,
+        Buffer $B, int $offsetB, int $ldB,
+        CommandQueue $queue, EventList $event
+     ) : void
+ {{{ */
+static PHP_METHOD(Blas, trsm)
+{
+    zend_long order;
+    zend_long side;
+    zend_long uplo;
+    zend_long trans;
+    zend_long diag;
+    zend_long m;
+    zend_long n;
+    double alpha;
+    zval* a_obj_p;
+    zend_long offsetA;
+    zend_long ldA;
+    zval* b_obj_p;
+    zend_long offsetB;
+    zend_long ldB;
+    zval* queue_obj_p;
+    zval* event_obj_p=NULL;
+    php_rindow_opencl_buffer_t* bufferA;
+    php_rindow_opencl_buffer_t* bufferB;
+    php_rindow_opencl_command_queue_t* queue_obj;
+    CLBlastStatusCode status;
+    cl_event event;
+    cl_event *event_p=NULL;
+
+    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 15, 16)
+        Z_PARAM_LONG(order)
+        Z_PARAM_LONG(side)
+        Z_PARAM_LONG(uplo)
+        Z_PARAM_LONG(trans)
+        Z_PARAM_LONG(diag)
+        Z_PARAM_LONG(m)
+        Z_PARAM_LONG(n)
+        Z_PARAM_DOUBLE(alpha)
+        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetA)
+        Z_PARAM_LONG(ldA)
+        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_LONG(offsetB)
+        Z_PARAM_LONG(ldB)
+        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OPTIONAL
+        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+    ZEND_PARSE_PARAMETERS_END();
+
+    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_p = &event;
+    }
+
+    if(bufferA->dtype!=bufferB->dtype) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B and C", 0);
+        return;
+    }
+    switch (bufferA->dtype) {
+        case php_interop_polite_math_matrix_dtype_float32:
+            status = CLBlastStrsm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (CLBlastDiagonal)diag,
+                (size_t)m, (size_t)n,
+                (float)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                &(queue_obj->command_queue), event_p);
+            break;
+        case php_interop_polite_math_matrix_dtype_float64:
+            status = CLBlastDtrsm(
+                (CLBlastLayout)order,
+                (CLBlastSide)side,
+                (CLBlastTriangle)uplo,
+                (CLBlastTranspose)trans,
+                (CLBlastDiagonal)diag,
+                (size_t)m, (size_t)n,
+                (double)alpha,
+                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
+                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
+                &(queue_obj->command_queue), event_p);
+            break;
+        default:
+            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
+            return;
+    }
+    if(status!=CLBlastSuccess) {
+        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?trsm error=%d", status);
+        return;
+    }
+
+    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
+        return;
+    }
+}
+/* }}} */
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Blas_scal, 0, 0, 6)
     ZEND_ARG_INFO(0, n)
     ZEND_ARG_INFO(0, alpha)
@@ -1143,6 +1715,104 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Blas_gemm, 0, 0, 18)
     ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO_EX(ai_Blas_symm, 0, 0, 17)
+    ZEND_ARG_INFO(0, order)
+    ZEND_ARG_INFO(0, side)
+    ZEND_ARG_INFO(0, uplo)
+    ZEND_ARG_INFO(0, m)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(0, alpha)
+    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetA)
+    ZEND_ARG_INFO(0, ldA)
+    ZEND_ARG_OBJ_INFO(0, b, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetB)
+    ZEND_ARG_INFO(0, ldB)
+    ZEND_ARG_INFO(0, beta)
+    ZEND_ARG_OBJ_INFO(0, c, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetC)
+    ZEND_ARG_INFO(0, ldC)
+    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
+    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Blas_syrk, 0, 0, 14)
+    ZEND_ARG_INFO(0, order)
+    ZEND_ARG_INFO(0, uplo)
+    ZEND_ARG_INFO(0, trans)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(0, k)
+    ZEND_ARG_INFO(0, alpha)
+    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetA)
+    ZEND_ARG_INFO(0, ldA)
+    ZEND_ARG_INFO(0, beta)
+    ZEND_ARG_OBJ_INFO(0, c, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetC)
+    ZEND_ARG_INFO(0, ldC)
+    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
+    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Blas_syr2k, 0, 0, 17)
+    ZEND_ARG_INFO(0, order)
+    ZEND_ARG_INFO(0, uplo)
+    ZEND_ARG_INFO(0, trans)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(0, k)
+    ZEND_ARG_INFO(0, alpha)
+    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetA)
+    ZEND_ARG_INFO(0, ldA)
+    ZEND_ARG_OBJ_INFO(0, b, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetB)
+    ZEND_ARG_INFO(0, ldB)
+    ZEND_ARG_INFO(0, beta)
+    ZEND_ARG_OBJ_INFO(0, c, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetC)
+    ZEND_ARG_INFO(0, ldC)
+    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
+    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Blas_trmm, 0, 0, 15)
+    ZEND_ARG_INFO(0, order)
+    ZEND_ARG_INFO(0, side)
+    ZEND_ARG_INFO(0, uplo)
+    ZEND_ARG_INFO(0, trans)
+    ZEND_ARG_INFO(0, diag)
+    ZEND_ARG_INFO(0, m)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(0, alpha)
+    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetA)
+    ZEND_ARG_INFO(0, ldA)
+    ZEND_ARG_OBJ_INFO(0, b, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetB)
+    ZEND_ARG_INFO(0, ldB)
+    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
+    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(ai_Blas_trsm, 0, 0, 15)
+    ZEND_ARG_INFO(0, order)
+    ZEND_ARG_INFO(0, side)
+    ZEND_ARG_INFO(0, uplo)
+    ZEND_ARG_INFO(0, trans)
+    ZEND_ARG_INFO(0, diag)
+    ZEND_ARG_INFO(0, m)
+    ZEND_ARG_INFO(0, n)
+    ZEND_ARG_INFO(0, alpha)
+    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetA)
+    ZEND_ARG_INFO(0, ldA)
+    ZEND_ARG_OBJ_INFO(0, b, Rindow\\OpenCL\\Buffer, 0)
+    ZEND_ARG_INFO(0, offsetB)
+    ZEND_ARG_INFO(0, ldB)
+    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
+    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(ai_Blas_void, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
@@ -1160,6 +1830,11 @@ static zend_function_entry php_rindow_clblast_blas_me[] = {
     PHP_ME(Blas, swap,  ai_Blas_swap,  ZEND_ACC_PUBLIC)
     PHP_ME(Blas, gemv,  ai_Blas_gemv,  ZEND_ACC_PUBLIC)
     PHP_ME(Blas, gemm,  ai_Blas_gemm,  ZEND_ACC_PUBLIC)
+    PHP_ME(Blas, symm,  ai_Blas_symm,  ZEND_ACC_PUBLIC)
+    PHP_ME(Blas, syrk,  ai_Blas_syrk,  ZEND_ACC_PUBLIC)
+    PHP_ME(Blas, syr2k, ai_Blas_syr2k, ZEND_ACC_PUBLIC)
+    PHP_ME(Blas, trmm,  ai_Blas_trmm,  ZEND_ACC_PUBLIC)
+    PHP_ME(Blas, trsm,  ai_Blas_trsm,  ZEND_ACC_PUBLIC)
     PHP_FE_END
     /* clang-format on */
 };
