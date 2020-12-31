@@ -85,6 +85,82 @@ for($ii=0;$ii<$batch_count;$ii++) {
     #echo "\n";
 }
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->gemmStridedBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $invalidBuffer,$offsetA=0,$ldA=$k,$strideA,
+        $bufferB,$offsetB=0,$ldA=$n,$strideB,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,$strideC,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmStridedBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,$strideA,
+        $invalidBuffer,$offsetB=0,$ldA=$n,$strideB,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,$strideC,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmStridedBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,$strideA,
+        $bufferB,$offsetB=0,$ldA=$n,$strideB,
+        $beta,
+        $invalidBuffer,$offsetC=0,$ldC=$n,$strideC,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->gemmStridedBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,$strideA,
+        $bufferB,$offsetB=0,$ldA=$n,$strideB,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,$strideC,
+        $batch_count,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->gemmStridedBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,$strideA,
+        $bufferB,$offsetB=0,$ldA=$n,$strideB,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,$strideC,
+        $batch_count,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

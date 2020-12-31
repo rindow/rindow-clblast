@@ -3,9 +3,14 @@
 #ifndef PHP_RINDOW_CLBLAST_H
 # define PHP_RINDOW_CLBLAST_H
 
+#include <Rindow/OpenCL/Buffer.h>
+#include <Rindow/OpenCL/CommandQueue.h>
+#include <Rindow/OpenCL/EventList.h>
+#include <Interop/Polite/Math/Matrix.h>
+
 # define phpext_rindow_clblast_ptr &rindow_clblast_module_entry
 
-# define PHP_RINDOW_CLBLAST_VERSION "0.1.1"
+# define PHP_RINDOW_CLBLAST_VERSION "0.1.2"
 
 # if defined(ZTS) && defined(COMPILE_DL_RINDOW_CLBLAST)
 ZEND_TSRMLS_CACHE_EXTERN()
@@ -48,5 +53,18 @@ extern void php_rindow_clblast_math_init_ce(INIT_FUNC_ARGS);
 extern zend_module_entry rindow_clblast_module_entry;
 
 extern int php_rindow_clblast_append_event(zval* event_list_obj_p, cl_event *event);
+
+extern int php_rindow_clblast_assert_opencl_buffer_type(
+    php_rindow_opencl_buffer_t *buffer,
+    char* name);
+extern int php_rindow_clblast_assert_opencl_command_queue_type(
+    php_rindow_opencl_command_queue_t *queue,
+    char* name);
+extern int php_rindow_clblast_assert_opencl_event_list_type(
+    php_rindow_opencl_event_list_t *events,
+    char* name);
+extern int php_rindow_clblast_assert_host_buffer_type(
+    php_interop_polite_math_matrix_linear_buffer_t *buffer,
+    char* name);
 
 #endif	/* PHP_RINDOW_CLBLAST_H */

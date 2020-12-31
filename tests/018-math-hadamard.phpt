@@ -48,6 +48,52 @@ for($i=0;$i<NMITEM;$i++) {
     assert($hostBufferR[$i]==$hostBufferZ[$i]);
 }
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->hadamard(NMITEM,$alpha,$invalidBuffer,$offsetX=0,$incX=1,
+        $bufferY,$offsetY=0,$incY=1,$beta,$bufferZ,$offsetZ=0,$incZ=1,$queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->hadamard(NMITEM,$alpha,$bufferX,$offsetX=0,$incX=1,
+        $invalidBuffer,$offsetY=0,$incY=1,$beta,$bufferZ,$offsetZ=0,$incZ=1,$queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->hadamard(NMITEM,$alpha,$bufferX,$offsetX=0,$incX=1,
+        $bufferY,$offsetY=0,$incY=1,$beta,$invalidBuffer,$offsetZ=0,$incZ=1,$queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->hadamard(NMITEM,$alpha,$bufferX,$offsetX=0,$incX=1,
+        $bufferY,$offsetY=0,$incY=1,$beta,$bufferZ,$offsetZ=0,$incZ=1,$invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->hadamard(NMITEM,$alpha,$bufferX,$offsetX=0,$incX=1,
+        $bufferY,$offsetY=0,$incY=1,$beta,$bufferZ,$offsetZ=0,$incZ=1,$queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

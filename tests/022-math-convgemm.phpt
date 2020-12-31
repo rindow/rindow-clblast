@@ -191,7 +191,106 @@ for($i=0;$i<count($host_result_buffer);$i++) {
 }
 #echo "\n";
 echo "SUCCESS im2col+gemm\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->convgemm($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $num_kernels,$batch_count,
+        $invalidBuffer,$im_offset,
+        $kernel_buffer,$kernel_offset,
+        $result_buffer,$result_offset,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->convgemm($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $num_kernels,$batch_count,
+        $im_buffer,$im_offset,
+        $invalidBuffer,$kernel_offset,
+        $result_buffer,$result_offset,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->convgemm($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $num_kernels,$batch_count,
+        $im_buffer,$im_offset,
+        $kernel_buffer,$kernel_offset,
+        $invalidBuffer,$result_offset,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->convgemm($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $num_kernels,$batch_count,
+        $im_buffer,$im_offset,
+        $kernel_buffer,$kernel_offset,
+        $result_buffer,$result_offset,
+        $invalidQueue,$events);
+    $blas->axpy(intval(2),$alpha=1.0,
+        $bufferX,$offset=0,$inc=1,
+        $bufferY,$offsetY=0,$incY=1,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->convgemm($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $num_kernels,$batch_count,
+        $im_buffer,$im_offset,
+        $kernel_buffer,$kernel_offset,
+        $result_buffer,$result_offset,
+        $queue,$invalidEvents);
+    $blas->axpy(intval(2),$alpha=1.0,
+        $bufferX,$offset=0,$inc=1,
+        $bufferY,$offsetY=0,$incY=1,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS convgemm
 SUCCESS im2col+gemm
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

@@ -63,26 +63,40 @@ static PHP_METHOD(Math, sum)
     php_rindow_opencl_buffer_t* bufferX;
     php_rindow_opencl_buffer_t* bufferR;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 7, 8)
         Z_PARAM_LONG(n)
-        Z_PARAM_ZVAL(result_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(result_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetR)
-        Z_PARAM_ZVAL(x_obj_p)       // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(x_obj_p)       // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetX)
         Z_PARAM_LONG(incX)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferR = Z_RINDOW_OPENCL_BUFFER_OBJ_P(result_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferR,"result")) {
+        return;
+    }
     bufferX = Z_RINDOW_OPENCL_BUFFER_OBJ_P(x_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferX,"x")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -135,26 +149,40 @@ static PHP_METHOD(Math, imax)
     php_rindow_opencl_buffer_t* bufferX;
     php_rindow_opencl_buffer_t* bufferR;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 7, 8)
         Z_PARAM_LONG(n)
-        Z_PARAM_ZVAL(result_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(result_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetR)
-        Z_PARAM_ZVAL(x_obj_p)       // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(x_obj_p)       // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetX)
         Z_PARAM_LONG(incX)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferR = Z_RINDOW_OPENCL_BUFFER_OBJ_P(result_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferR,"result")) {
+        return;
+    }
     bufferX = Z_RINDOW_OPENCL_BUFFER_OBJ_P(x_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferX,"x")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
     switch (bufferX->dtype) {
@@ -206,26 +234,40 @@ static PHP_METHOD(Math, imin)
     php_rindow_opencl_buffer_t* bufferX;
     php_rindow_opencl_buffer_t* bufferR;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 7, 8)
         Z_PARAM_LONG(n)
-        Z_PARAM_ZVAL(result_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(result_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetR)
-        Z_PARAM_ZVAL(x_obj_p)       // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(x_obj_p)       // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetX)
         Z_PARAM_LONG(incX)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferR = Z_RINDOW_OPENCL_BUFFER_OBJ_P(result_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferR,"result")) {
+        return;
+    }
     bufferX = Z_RINDOW_OPENCL_BUFFER_OBJ_P(x_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferX,"x")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
     switch (bufferX->dtype) {
@@ -287,6 +329,7 @@ static PHP_METHOD(Math, hadamard)
     php_rindow_opencl_buffer_t* bufferY;
     php_rindow_opencl_buffer_t* bufferZ;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -294,26 +337,42 @@ static PHP_METHOD(Math, hadamard)
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 13, 14)
         Z_PARAM_LONG(n)
         Z_PARAM_DOUBLE(alpha)
-        Z_PARAM_ZVAL(x_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(x_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetX)
         Z_PARAM_LONG(incX)
-        Z_PARAM_ZVAL(y_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(y_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetY)
         Z_PARAM_LONG(incY)
         Z_PARAM_DOUBLE(beta)
-        Z_PARAM_ZVAL(z_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(z_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetZ)
         Z_PARAM_LONG(incZ)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferX = Z_RINDOW_OPENCL_BUFFER_OBJ_P(x_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferX,"x")) {
+        return;
+    }
     bufferY = Z_RINDOW_OPENCL_BUFFER_OBJ_P(y_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferY,"y")) {
+        return;
+    }
     bufferZ = Z_RINDOW_OPENCL_BUFFER_OBJ_P(z_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferZ,"z")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -385,6 +444,7 @@ static PHP_METHOD(Math, omatcopy)
     php_rindow_opencl_buffer_t* bufferA;
     php_rindow_opencl_buffer_t* bufferB;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -395,21 +455,34 @@ static PHP_METHOD(Math, omatcopy)
         Z_PARAM_LONG(m)
         Z_PARAM_LONG(n)
         Z_PARAM_DOUBLE(alpha)
-        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(a_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetA)
         Z_PARAM_LONG(ldA)
-        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(b_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetB)
         Z_PARAM_LONG(ldB)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferA,"a")) {
+        return;
+    }
     bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferB,"b")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -491,6 +564,7 @@ static PHP_METHOD(Math, im2col)
     php_rindow_opencl_buffer_t* im_buffer_obj;
     php_rindow_opencl_buffer_t* col_buffer_obj;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -508,19 +582,32 @@ static PHP_METHOD(Math, im2col)
         Z_PARAM_LONG(stride_w)
         Z_PARAM_LONG(dilation_h)
         Z_PARAM_LONG(dilation_w)
-        Z_PARAM_ZVAL(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(im_offset)
-        Z_PARAM_ZVAL(col_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(col_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(col_offset)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     im_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(im_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(im_buffer_obj,"im_buffer")) {
+        return;
+    }
     col_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(col_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(col_buffer_obj,"col_buffer")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -605,6 +692,7 @@ static PHP_METHOD(Math, col2im)
     php_rindow_opencl_buffer_t* col_buffer_obj;
     php_rindow_opencl_buffer_t* im_buffer_obj;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -622,19 +710,32 @@ static PHP_METHOD(Math, col2im)
         Z_PARAM_LONG(stride_w)
         Z_PARAM_LONG(dilation_h)
         Z_PARAM_LONG(dilation_w)
-        Z_PARAM_ZVAL(col_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(col_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(col_offset)
-        Z_PARAM_ZVAL(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(im_offset)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     im_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(im_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(im_buffer_obj,"im_buffer")) {
+        return;
+    }
     col_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(col_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(col_buffer_obj,"col_buffer")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -727,6 +828,7 @@ static PHP_METHOD(Math, convgemm)
     php_rindow_opencl_buffer_t* kernel_buffer_obj;
     php_rindow_opencl_buffer_t* result_buffer_obj;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -746,22 +848,38 @@ static PHP_METHOD(Math, convgemm)
         Z_PARAM_LONG(dilation_w)
         Z_PARAM_LONG(num_kernels)
         Z_PARAM_LONG(batch_count)
-        Z_PARAM_ZVAL(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(im_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(im_offset)
-        Z_PARAM_ZVAL(kernel_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(kernel_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(kernel_offset)
-        Z_PARAM_ZVAL(result_buffer_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(result_buffer_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(result_offset)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     im_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(im_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(im_buffer_obj,"im_buffer")) {
+        return;
+    }
     kernel_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(kernel_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(kernel_buffer_obj,"kernel_buffer")) {
+        return;
+    }
     result_buffer_obj = Z_RINDOW_OPENCL_BUFFER_OBJ_P(result_buffer_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(result_buffer_obj,"result_buffer")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -846,37 +964,59 @@ static PHP_METHOD(Math, axpyBatched)
     php_rindow_opencl_buffer_t* bufferY;
     php_interop_polite_math_matrix_linear_buffer_t* offsetsY_obj;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
 
     ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 13, 14)
         Z_PARAM_LONG(n)
-        Z_PARAM_ZVAL(alpha_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(alpha_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetA)
-        Z_PARAM_ZVAL(x_obj_p)        // Rindow\OpenCL\Buffer
-        Z_PARAM_ZVAL(offsetsX_obj_p) // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(x_obj_p)        // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(offsetsX_obj_p) // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetX)
         Z_PARAM_LONG(incX)
-        Z_PARAM_ZVAL(y_obj_p)        // Rindow\OpenCL\Buffer
-        Z_PARAM_ZVAL(offsetsY_obj_p) // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(y_obj_p)        // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(offsetsY_obj_p) // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetY)
         Z_PARAM_LONG(incY)
         Z_PARAM_LONG(batch_count)
-        Z_PARAM_ZVAL(queue_obj_p)    // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)    // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)    // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)    // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     alpha_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(alpha_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(alpha_obj,"alpha")) {
+        return;
+    }
     bufferX = Z_RINDOW_OPENCL_BUFFER_OBJ_P(x_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferX,"x")) {
+        return;
+    }
     offsetsX_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(offsetsX_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(offsetsX_obj,"offsetsX")) {
+        return;
+    }
     bufferY = Z_RINDOW_OPENCL_BUFFER_OBJ_P(y_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferY,"y")) {
+        return;
+    }
     offsetsY_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(offsetsY_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(offsetsY_obj,"offsetsY")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
-
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
-     event_p = &event;
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
+        event_p = &event;
     }
 
     if(offsetA<0) {
@@ -1005,6 +1145,7 @@ static PHP_METHOD(Math, gemmBatched)
     php_rindow_opencl_buffer_t* bufferC;
     php_interop_polite_math_matrix_linear_buffer_t* offsetsC_obj;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -1016,39 +1157,69 @@ static PHP_METHOD(Math, gemmBatched)
         Z_PARAM_LONG(m)
         Z_PARAM_LONG(n)
         Z_PARAM_LONG(k)
-        Z_PARAM_ZVAL(alpha_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(alpha_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetAlpha)
-        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
-        Z_PARAM_ZVAL(offsetsA_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(offsetsA_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetA)
         Z_PARAM_LONG(ldA)
-        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
-        Z_PARAM_ZVAL(offsetsB_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(offsetsB_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetB)
         Z_PARAM_LONG(ldB)
-        Z_PARAM_ZVAL(beta_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(beta_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetBeta)
-        Z_PARAM_ZVAL(c_obj_p)  // Rindow\OpenCL\Buffer
-        Z_PARAM_ZVAL(offsetsC_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
+        Z_PARAM_OBJECT(c_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(offsetsC_obj_p)    // Interop\Polite\Math\Matrix\LinearBuffer
         Z_PARAM_LONG(offsetC)
         Z_PARAM_LONG(ldC)
         Z_PARAM_LONG(batch_count)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     alpha_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(alpha_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(alpha_obj,"alpha")) {
+        return;
+    }
     bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferA,"a")) {
+        return;
+    }
     offsetsA_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(offsetsA_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(offsetsA_obj,"offsetsA")) {
+        return;
+    }
     bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferB,"b")) {
+        return;
+    }
     offsetsB_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(offsetsB_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(offsetsB_obj,"offsetsB")) {
+        return;
+    }
     beta_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(beta_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(beta_obj,"beta")) {
+        return;
+    }
     bufferC = Z_RINDOW_OPENCL_BUFFER_OBJ_P(c_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferC,"c")) {
+        return;
+    }
     offsetsC_obj = Z_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_OBJ_P(offsetsC_obj_p);
+    if(php_rindow_clblast_assert_host_buffer_type(offsetsC_obj,"offsetsC")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
-
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 
@@ -1203,6 +1374,7 @@ static PHP_METHOD(Math, gemmStridedBatched)
     php_rindow_opencl_buffer_t* bufferB;
     php_rindow_opencl_buffer_t* bufferC;
     php_rindow_opencl_command_queue_t* queue_obj;
+    php_rindow_opencl_event_list_t* event_obj;
     CLBlastStatusCode status;
     cl_event event;
     cl_event *event_p=NULL;
@@ -1215,30 +1387,46 @@ static PHP_METHOD(Math, gemmStridedBatched)
         Z_PARAM_LONG(n)
         Z_PARAM_LONG(k)
         Z_PARAM_DOUBLE(alpha)
-        Z_PARAM_ZVAL(a_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(a_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetA)
         Z_PARAM_LONG(ldA)
         Z_PARAM_LONG(strideA)
-        Z_PARAM_ZVAL(b_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(b_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetB)
         Z_PARAM_LONG(ldB)
         Z_PARAM_LONG(strideB)
         Z_PARAM_DOUBLE(beta)
-        Z_PARAM_ZVAL(c_obj_p)  // Rindow\OpenCL\Buffer
+        Z_PARAM_OBJECT(c_obj_p)  // Rindow\OpenCL\Buffer
         Z_PARAM_LONG(offsetC)
         Z_PARAM_LONG(ldC)
         Z_PARAM_LONG(strideC)
         Z_PARAM_LONG(batch_count)
-        Z_PARAM_ZVAL(queue_obj_p)  // Rindow\OpenCL\CommandQueue
+        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
         Z_PARAM_OPTIONAL
-        Z_PARAM_ZVAL(event_obj_p)  // Rindow\OpenCL\EventList
+        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
     ZEND_PARSE_PARAMETERS_END();
 
     bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferA,"a")) {
+        return;
+    }
     bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferB,"b")) {
+        return;
+    }
     bufferC = Z_RINDOW_OPENCL_BUFFER_OBJ_P(c_obj_p);
+    if(php_rindow_clblast_assert_opencl_buffer_type(bufferC,"c")) {
+        return;
+    }
     queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
+    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
+        return;
+    }
     if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
+        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
+        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
+            return;
+        }
         event_p = &event;
     }
 

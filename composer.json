@@ -6,10 +6,10 @@
     "license": "BSD-3-Clause",
     "require": {
         "php": ">=7.2",
-        "interop-phpobjects/polite-math": ">=1.0.3",
-        "ext-rindow_opencl": "0.1.0"
+        "interop-phpobjects/polite-math": ">=1.0.4",
+        "ext-rindow_opencl": "0.1.1"
     },
     "require-dev": {
-        "ext-rindow_openblas": ">=0.1.6"
+        "ext-rindow_openblas": ">=0.2.1"
     }
 }

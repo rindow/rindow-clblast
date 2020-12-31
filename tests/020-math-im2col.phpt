@@ -103,6 +103,73 @@ for($i=0;$i<count($host_col_buffer);$i++) {
 #    echo $trues[$i].",";
 #}
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->im2col($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $invalidBuffer,$im_offset,
+        $col_buffer,$col_offset,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->im2col($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $im_buffer,$im_offset,
+        $invalidBuffer,$col_offset,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->im2col($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $im_buffer,$im_offset,
+        $col_buffer,$col_offset,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->im2col($kernel_mode,
+        $channels,$height,$width,
+        $kernel_h,$kernel_w,
+        $pad_h,$pad_w,
+        $stride_h,$stride_w,
+        $dilation_h,$dilation_w,
+        $im_buffer,$im_offset,
+        $col_buffer,$col_offset,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

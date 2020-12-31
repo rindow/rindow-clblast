@@ -69,6 +69,77 @@ for($i=0;$i<$m*$n;$i++) {
     assert($hostBufferC[$i]==$testTruesR[$i]);
 }
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $blas->gemm(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $invalidBuffer,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetB=0,$ldA=$n,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $blas->gemm(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,
+        $invalidBuffer,$offsetB=0,$ldA=$n,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $blas->gemm(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetB=0,$ldA=$n,
+        $beta,
+        $invalidBuffer,$offsetC=0,$ldC=$n,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $blas->gemm(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetB=0,$ldA=$n,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $blas->gemm(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $alpha,
+        $bufferA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetB=0,$ldA=$n,
+        $beta,
+        $bufferC,$offsetC=0,$ldC=$n,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

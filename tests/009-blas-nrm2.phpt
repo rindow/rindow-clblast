@@ -41,6 +41,53 @@ $events->wait();
 $bufferR->read($queue,$hostBufferR);
 assert(abs($hostBufferR[0]-$nrm2)<1e-7);
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $blas->nrm2(NMITEM,
+        $invalidBuffer,$offsetR=0,
+        $bufferX,$offsetX=0,$incX=1,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $blas->nrm2(NMITEM,
+        $bufferR,$offsetR=0,
+        $invalidBuffer,$offsetX=0,$incX=1,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $blas->nrm2(NMITEM,
+        $bufferR,$offsetR=0,
+        $bufferX,$offsetX=0,$incX=1,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $blas->nrm2(NMITEM,
+        $bufferR,$offsetR=0,
+        $bufferX,$offsetX=0,$incX=1,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

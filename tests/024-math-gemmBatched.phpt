@@ -107,6 +107,147 @@ for($ii=0;$ii<$batch_count;$ii++) {
     #echo "\n";
 }
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $invalidBuffer,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $invalidBuffer,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$invalidBuffer,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $invalidBuffer,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$invalidBuffer,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $invalidBuffer,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $invalidBuffer,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$invalidBuffer,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->gemmBatched(BLAS::RowMajor,BLAS::NoTrans,BLAS::NoTrans,$m,$n,$k,
+        $hostAlpha,0,
+        $bufferA,$offsetsA,$offsetA=0,$ldA=$k,
+        $bufferB,$offsetsB,$offsetB=0,$ldA=$n,
+        $hostBeta,0,
+        $bufferC,$offsetsC,$offsetC=0,$ldC=$n,
+        $batch_count,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

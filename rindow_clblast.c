@@ -13,6 +13,7 @@
 #define CL_TARGET_OPENCL_VERSION 120
 #include <CL/opencl.h>
 #include <Rindow/OpenCL/EventList.h>
+#include <Interop/Polite/Math/Matrix.h>
 #include "php_rindow_clblast.h"
 
 /* For compatibility with older PHP versions */
@@ -36,6 +37,54 @@ int php_rindow_clblast_append_event(zval* event_list_obj_p, cl_event* event)
     }
     memcpy(&(events->events[events->num]),event,sizeof(cl_event));
     events->num++;
+    return 0;
+}
+
+int php_rindow_clblast_assert_opencl_buffer_type(
+    php_rindow_opencl_buffer_t *buffer,
+    char* name)
+{
+    if(buffer->signature!=PHP_RINDOW_OPENCL_BUFFER_SIGNATURE) {
+        zend_throw_exception_ex(zend_ce_type_error, 0, "%s must implement interface %s",
+            name,PHP_RINDOW_OPENCL_BUFFER_CLASSNAME);
+        return 1;
+    }
+    return 0;
+}
+
+int php_rindow_clblast_assert_opencl_command_queue_type(
+    php_rindow_opencl_command_queue_t *queue,
+    char* name)
+{
+    if(queue->signature!=PHP_RINDOW_OPENCL_COMMAND_QUEUE_SIGNATURE) {
+        zend_throw_exception_ex(zend_ce_type_error, 0, "%s must implement interface %s",
+            name,PHP_RINDOW_OPENCL_COMMAND_QUEUE_CLASSNAME);
+        return 1;
+    }
+    return 0;
+}
+
+int php_rindow_clblast_assert_opencl_event_list_type(
+    php_rindow_opencl_event_list_t *events,
+    char* name)
+{
+    if(events->signature!=PHP_RINDOW_OPENCL_EVENT_LIST_SIGNATURE) {
+        zend_throw_exception_ex(zend_ce_type_error, 0, "%s must implement interface %s",
+            name,PHP_RINDOW_OPENCL_EVENT_LIST_CLASSNAME);
+        return 1;
+    }
+    return 0;
+}
+
+int php_rindow_clblast_assert_host_buffer_type(
+    php_interop_polite_math_matrix_linear_buffer_t *buffer,
+    char* name)
+{
+    if(!php_interop_polite_math_matrix_is_linear_buffer(buffer)) {
+        zend_throw_exception_ex(zend_ce_type_error, 0, "%s must implement interface %s",
+            name,PHP_INTEROP_POLITE_MATH_MATRIX_LINEAR_BUFFER_CLASSNAME);
+        return 1;
+    }
     return 0;
 }
 

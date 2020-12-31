@@ -35,6 +35,41 @@ $hostBufferR = new RindowTest\CLBlast\HostBuffer(1,NDArray::int32);
 $bufferR->read($queue,$hostBufferR,intval(32/8));
 assert($hostBufferR[0]==0);
 echo "SUCCESS\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $math->imin(NMITEM,$invalidBuffer,$offsetR=0,$buffer,$offset=0,$inc=1,$queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+try {
+    $math->imin(NMITEM,$bufferR,$offsetR=0,$invalidBuffer,$offset=0,$inc=1,$queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $math->imin(NMITEM,$bufferR,$offsetR=0,$buffer,$offset=0,$inc=1,$invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $math->imin(NMITEM,$bufferR,$offsetR=0,$buffer,$offset=0,$inc=1,$queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS
+Invalid Buffer catch: TypeError
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments

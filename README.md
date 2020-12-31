@@ -124,7 +124,7 @@ See https://github.com/rindow/rindow-openblas/ for more information.
 
 ```shell
 C:\tmp>copy rindow_openblas.dll /path/to/php-installation-path/ext
-C:\tmp>echo extension=rindow_openblas.dll >> /path/to/php-installation-path/php.ini
+C:\tmp>echo extension=rindow_openblas >> /path/to/php-installation-path/php.ini
 C:\tmp>PATH %PATH%;/path/to/OpenBLAS/bin
 ```
 

@@ -52,8 +52,43 @@ for($i=0;$i<NMITEM;$i++) {
     assert($hostBuffer[$i]==$i);
 }
 echo "SUCCESS Limit-range\n";
+//
+// invalid object arguments
+//
+$events = new Rindow\OpenCL\EventList();
+$invalidBuffer = new \stdClass();
+try {
+    $blas->scal(intval(2),$alpha=1.0,
+        $invalidBuffer,$offset=0,$inc=1,
+        $queue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Buffer catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidQueue = new \stdClass();
+try {
+    $blas->scal(intval(2),$alpha=1.0,
+        $buffer,$offset=0,$inc=1,
+        $invalidQueue,$events);
+} catch (\Throwable $e) {
+    echo "Invalid Queue catch: ".get_class($e)."\n";
+}
+$events = new Rindow\OpenCL\EventList();
+$invalidEvents = new \stdClass();
+try {
+    $blas->scal(intval(2),$alpha=1.0,
+        $buffer,$offset=0,$inc=1,
+        $queue,$invalidEvents);
+} catch (\Throwable $e) {
+    echo "Invalid Event catch: ".get_class($e)."\n";
+}
+echo "SUCCESS invalid object arguments\n";
 ?>
 --EXPECT--
 SUCCESS Full-range
 SUCCESS Offset-range
 SUCCESS Limit-range
+Invalid Buffer catch: TypeError
+Invalid Queue catch: TypeError
+Invalid Event catch: TypeError
+SUCCESS invalid object arguments
