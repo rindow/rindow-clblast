@@ -1,18 +1,17 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <php.h>
 #include <Zend/zend_interfaces.h>
 #include <Zend/zend_exceptions.h>
 #include <ext/spl/spl_iterators.h>
 #include <ext/spl/spl_exceptions.h>
-#define CL_TARGET_OPENCL_VERSION 120
 #include <CL/opencl.h>
 #include <clblast_c.h>
 #include <Interop/Polite/Math/Matrix.h>
 #include <Rindow/OpenCL/Buffer.h>
 #include <Rindow/OpenCL/CommandQueue.h>
 #include <Rindow/OpenCL/EventList.h>
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 
 #include "php_rindow_clblast.h"
 

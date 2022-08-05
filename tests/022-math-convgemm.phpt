@@ -131,7 +131,7 @@ for($i=0;$i<count($host_result_buffer);$i++) {
 $result_buffer->write($queue,$host_result_buffer);
 $host_col_buffer = new RindowTest\CLBlast\HostBuffer($kernel_h*$kernel_w*$channels*$batch_count*$out_h*$out_w,NDArray::float32);
 $col_buffer = new Rindow\OpenCL\Buffer($context,intval(count($host_col_buffer)*32/8),
-    OpenCL::CL_MEM_READ_WRITE,null,null,NDArray::float32);
+    OpenCL::CL_MEM_READ_WRITE,null,0,NDArray::float32);
 $blas = new Rindow\CLBlast\Blas();
 $events = new Rindow\OpenCL\EventList();
 for($b=0;$b<$batch_count;$b++) {

@@ -14,10 +14,13 @@ use Interop\Polite\Math\Matrix\OpenCL;
 use Interop\Polite\Math\Matrix\NDArray;
 use Interop\Polite\Math\Matrix\BLAS;
 
-$m = 2048;
-$n = 2048;
-$k = 2048;
-$context = new Rindow\OpenCL\Context(OpenCL::CL_DEVICE_TYPE_GPU);
+//$m = 2048;
+//$n = 2048;
+//$k = 2048;
+$m = 512;
+$n = 512;
+$k = 512;
+$context = new Rindow\OpenCL\Context(OpenCL::CL_DEVICE_TYPE_DEFAULT);
 $queue = new Rindow\OpenCL\CommandQueue($context);
 $hostBufferA = new RindowTest\CLBlast\HostBuffer($m*$k,NDArray::float32);
 $hostBufferB = new RindowTest\CLBlast\HostBuffer($k*$n,NDArray::float32);

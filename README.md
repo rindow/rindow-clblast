@@ -9,11 +9,11 @@ Rindow-CLBlast allows you to harness the power of your GPU with Rindow-Neural-Ne
 Requirements
 ============
 
-- PHP7.2 or PHP7.3 or PHP7.4 or PHP8.0
+- PHP7.2 or PHP7.3 or PHP7.4 or PHP8.0 or PHP8.1
 - interop-phpobjects/polite-math 1.0.4 or later
 - LinearBuffer implements for interop-phpobjects (rindow_openblas etc.)
-- rindow_opencl PHP extension 0.1.1
-- OpenCL 1.2 drivers/libraries.
+- rindow_opencl PHP extension 0.1.4
+- OpenCL 1.1/1.2 drivers/libraries.
 - Windows 10
 
 AMD GPU/APU drivers for windows are including OpenCL drivers.
@@ -46,6 +46,7 @@ Please download the following two binaries and extract.
 - DLL of OpenBLAS library.
 - DLL of CLBlast library.
 
+### Windows
 Copy the shared library to the PHP extension directory and set it in php.ini.
 And OpenBLAS DLL's path to Windows PATH environment variable.
 
@@ -61,6 +62,123 @@ C:\tmp>cd /some/app/directory
 C:\app\dir>composer require rindow/rindow-math-matrix
 ```
 
+### Ubuntu
+
+For example, in the case of Ubuntu standard AMD driver, install as follows
+```shell
+$ sudo apt install clinfo
+$ sudo apt install mesa-opencl-icd
+$ sudo mkdir -p /usr/local/usr/lib
+$ sudo ln -s /usr/lib/clc /usr/local/usr/lib/clc
+```
+Ubuntu standard OpenCL drivers include:
+- mesa-opencl-icd
+- beignet-opencl-icd
+- intel-opencl-icd
+- nvidia-opencl-icd-xxx
+- pocl-opencl-icd
+
+
+Install the CLBlast binaries
+
+Extract Archive file
+```shell
+$ xz -dc ./CLBlast-X.X.X-Linux-x64.tar.xz | tar xvf -
+```
+
+Edit prefix item in the file ./CLBlast-X.X.X-Linux-x64/lib/pkgconfig/clblast.pc
+```
+prefix=/usr
+```
+And then Copy to /usr.
+
+Install the deb file.
+```shell
+$ sudo apt install ./rindow-opencl-phpX.X_X.X.X-X+ubuntuXX.XX_amd64.deb
+$ sudo apt install ./rindow-clblast-phpX.X_X.X.X-X+ubuntuXX.XX_amd64.deb
+```
+
+ow to build from source code on Linux
+========================================
+You can also build and use from source code.
+
+### Install OpenCL ICD and Tool
+```shell
+$ sudo apt install clinfo
+```
+
+### Install Hardware-dependent OpenCL library.
+For example, in the case of Ubuntu standard AMD driver, install as follows
+
+```shell
+$ sudo apt install mesa-opencl-icd
+$ sudo mkdir -p /usr/local/usr/lib
+$ sudo ln -s /usr/lib/clc /usr/local/usr/lib/clc
+```
+
+In addition, there are the following drivers.
+
+- mesa-opencl-icd
+- beignet-opencl-icd
+- intel-opencl-icd
+- nvidia-opencl-icd-xxx
+- pocl-opencl-icd
+
+### Check OpenCL status
+How to check the installation status
+
+```shell
+$ clinfo
+Number of platforms                               1
+  Platform Name                                   Clover
+  Platform Vendor                                 Mesa
+  Platform Version                                OpenCL 1.1 Mesa 21.2.6
+  Platform Profile                                FULL_PROFILE
+  Platform Extensions                             cl_khr_icd
+  Platform Extensions function suffix             MESA
+....
+...
+..
+.
+```
+
+### Install build tools and libray
+Install gcc development environment and opencl library. Then install the php development environment according to the target php version.
+
+```shell
+$ sudo apt install build-essential autoconf automake libtool bison re2c
+$ sudo apt install pkg-config
+$ sudo apt install php8.1-dev
+$ sudo apt install ocl-icd-opencl-dev
+$ sudo apt install ./rindow-openblas-php8.1_X.X.X-X+ubuntuXX.XX_amd64.deb
+$ sudo apt install ./rindow-opencl-php8.1_X.X.X-X+ubuntuXX.XX_amd64.deb
+```
+
+### Build
+Run the target php version of phpize and build.
+
+```shell
+$ git clone https://github.com/rindow/rindow-opencl
+$ git clone https://github.com/rindow/rindow-clblast
+$ cd rindow-clblast
+$ composer update
+$ phpize8.1
+$ mv build/Makefile.global build/Makefile.global.orig
+$ sed -f Makefile.global.patch < build/Makefile.global.orig > build/Makefile.global
+$ ./configure --enable-rindow_clblast --with-rindow_opencl=../rindow-opencl --with-php-config=php-config8.1
+$ make clean
+$ make
+$ make test
+```
+
+### Install from built directory
+
+```shell
+$ sudo make install
+```
+Add the "extension=rindow_clblast" entry to php.ini
+
+
 How to build from source code on Windows
 ========================================
 
@@ -70,7 +188,7 @@ Developing PHP extensions from php7.2 to php7.4 requires VC15 instead of the lat
 - Install Microsoft Visual Studio 2019 or later installer
 - Run Installer with vs2017 build tools option.
 
-Developing PHP extensions from php8.0 requires VS16. You can use Visual Studio 2019.
+Developing PHP extensions from php8.0/8.1 requires VS16. You can use Visual Studio 2019.
 
 ### php sdk and devel-pack binaries for windows
 

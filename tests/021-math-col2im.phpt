@@ -64,7 +64,7 @@ for($ch_id=0;$ch_id<$channels;$ch_id++) {
 $col_buffer = new Rindow\OpenCL\Buffer($context,intval(count($host_col_buffer)*32/8),
     OpenCL::CL_MEM_READ_ONLY|OpenCL::CL_MEM_COPY_HOST_PTR,$host_col_buffer);
 $im_buffer = new Rindow\OpenCL\Buffer($context,intval(count($host_im_buffer)*32/8),
-    OpenCL::CL_MEM_READ_WRITE|OpenCL::CL_MEM_COPY_HOST_PTR,$host_im_buffer,null,NDArray::float32);
+    OpenCL::CL_MEM_READ_WRITE|OpenCL::CL_MEM_COPY_HOST_PTR,$host_im_buffer,0,NDArray::float32);
 #CLBlastSim2col(
 #    const CLBlastKernelMode kernel_mode,
 #    const size_t channels, const size_t height, const size_t width,

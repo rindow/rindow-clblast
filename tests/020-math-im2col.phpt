@@ -22,8 +22,8 @@ $kernel_mode = Rindow\CLBlast\Math::CONVOLUTION;
 $channels=3;
 $height=4;
 $width=4;
-$kernel_h = 3;
-$kernel_w = 3;
+$kernel_h = 2;
+$kernel_w = 2;
 $pad_h = 0;
 $pad_w = 0;
 $stride_h = 1;
@@ -68,7 +68,7 @@ $im_buffer = new Rindow\OpenCL\Buffer($context,intval(count($host_im_buffer)*32/
     OpenCL::CL_MEM_READ_ONLY|OpenCL::CL_MEM_COPY_HOST_PTR,
     $host_im_buffer);
 $col_buffer = new Rindow\OpenCL\Buffer($context,intval(count($host_col_buffer)*32/8),
-    OpenCL::CL_MEM_WRITE_ONLY,null,null,NDArray::float32);
+    OpenCL::CL_MEM_WRITE_ONLY,null,0,NDArray::float32);
 
 #CLBlastSim2col(
 #    const CLBlastKernelMode kernel_mode,
@@ -93,6 +93,7 @@ $math->im2col($kernel_mode,
     $col_buffer,$col_offset,
     $queue,$events);
 $events->wait();
+
 $col_buffer->read($queue,$host_col_buffer);
 for($i=0;$i<count($host_col_buffer);$i++) {
     #echo $host_col_buffer[$i].",";
