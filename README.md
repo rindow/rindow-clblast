@@ -9,7 +9,7 @@ Rindow-CLBlast allows you to harness the power of your GPU with Rindow-Neural-Ne
 Requirements
 ============
 
-- PHP7.2 or PHP7.3 or PHP7.4 or PHP8.0 or PHP8.1
+- PHP7.2 or PHP7.3 or PHP7.4 or PHP8.0 or PHP8.1 or PHP8.2
 - interop-phpobjects/polite-math 1.0.4 or later
 - LinearBuffer implements for interop-phpobjects (rindow_openblas etc.)
 - rindow_opencl PHP extension 0.1.4
@@ -17,8 +17,10 @@ Requirements
 - Windows 10
 
 AMD GPU/APU drivers for windows are including OpenCL drivers.
-Probably you can use Intel OpenCL dirivers.
+Intel Integrated GPU for windows are including OpenCL drivers.
+Or you can use Intel OpenCL dirivers.
 Intel OpenCL drivers can be downloaded from site https://software.intel.com/content/www/us/en/develop/articles/opencl-drivers.html
+
 
 Recommend environment
 =====================
@@ -39,6 +41,7 @@ Download the binary for your version of PHP.
 - https://github.com/CNugteren/CLBlast/releases
 
 Please download the following two binaries and extract.
+The compatible CLBlast Library release number is included in the filename of the rindow-clblast pre-built archive file. If you use the wrong CLBlast Library release number DLL, it will not work properly.
 
 - The PHP extension of rindow-opencl that matches the php version.
 - The PHP extension of rindow-openblas that matches the php version.
@@ -81,24 +84,19 @@ Ubuntu standard OpenCL drivers include:
 
 Install the CLBlast binaries
 
-Extract Archive file
+Download and Extract Archive file and Pack to deb
 ```shell
-$ xz -dc ./CLBlast-X.X.X-Linux-x64.tar.xz | tar xvf -
+$ sh ./clblast-packdeb.sh
+$ sudo apt install ./clblast_X.X.X-X+ubuntuXX.XX_amd64.deb
 ```
 
-Edit prefix item in the file ./CLBlast-X.X.X-Linux-x64/lib/pkgconfig/clblast.pc
-```
-prefix=/usr
-```
-And then Copy to /usr.
-
-Install the deb file.
+Install the deb files.
 ```shell
 $ sudo apt install ./rindow-opencl-phpX.X_X.X.X-X+ubuntuXX.XX_amd64.deb
 $ sudo apt install ./rindow-clblast-phpX.X_X.X.X-X+ubuntuXX.XX_amd64.deb
 ```
 
-ow to build from source code on Linux
+How to build from source code on Linux
 ========================================
 You can also build and use from source code.
 
@@ -161,6 +159,8 @@ Run the target php version of phpize and build.
 $ git clone https://github.com/rindow/rindow-opencl
 $ git clone https://github.com/rindow/rindow-clblast
 $ cd rindow-clblast
+$ sh ./clblast-packdeb.sh
+$ sudo apt install ./clblast_X.X.X-X+ubuntuXX.XX_amd64.deb
 $ composer update
 $ phpize8.1
 $ mv build/Makefile.global build/Makefile.global.orig
@@ -188,7 +188,7 @@ Developing PHP extensions from php7.2 to php7.4 requires VC15 instead of the lat
 - Install Microsoft Visual Studio 2019 or later installer
 - Run Installer with vs2017 build tools option.
 
-Developing PHP extensions from php8.0/8.1 requires VS16. You can use Visual Studio 2019.
+Developing PHP extensions from php8.0/8.1/8.2 requires VS16. You can use Visual Studio 2019.
 
 ### php sdk and devel-pack binaries for windows
 
