@@ -7,9 +7,9 @@
     "require": {
         "php": ">=7.2",
         "interop-phpobjects/polite-math": ">=1.0.4",
-        "ext-rindow_opencl": "^0.1.1"
+        "ext-rindow_opencl": ">=0.2.0"
     },
     "require-dev": {
-        "ext-rindow_openblas": ">=0.2.1"
+        "ext-rindow_openblas": ">=0.4.0"
     }
 }

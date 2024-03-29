@@ -46,7 +46,7 @@ if (PHP_RINDOW_CLBLAST != 'no') {
   AC_DEFINE('HAVE_RINDOW_OPENCL', 1, 'rindow_clblast support enabled');
   AC_DEFINE('CL_TARGET_OPENCL_VERSION', 120, 'Target OpenCL version 1.2');
 
-  EXTENSION('rindow_clblast', 'rindow_clblast.c', null, PHP_RINDOW_CLBLAST_CFLAGS);
+  EXTENSION('rindow_clblast', 'rindow_clblast.c clblast_client.c', null, PHP_RINDOW_CLBLAST_CFLAGS);
   ADD_SOURCES(configure_module_dirname + "/src/Rindow/CLBlast", " Blas.c Math.c", "rindow_clblast");
   if (CHECK_LIB("OpenCL.lib", "rindow_clblast", PHP_OPENCL + '/lib')) {
       ADD_FLAG("LIBS_OPENCL", "OpenCL.lib");
@@ -54,11 +54,11 @@ if (PHP_RINDOW_CLBLAST != 'no') {
   } else {
       ERROR("NOT FOUND: OpenCL library. Please copy OpenCL.lib to opencl sdk directory with --with-opencl=/some/dir");
   }
-  if (CHECK_LIB("clblast.lib", "rindow_clblast", PHP_CLBLAST + '/lib')) {
-      ADD_FLAG("LIBS_CLBLAST", "clblast.lib");
-      ADD_FLAG("LDFLAGS", '/libpath:"\\"' + PHP_CLBLAST + '/lib' + '\\"" ');
-  } else {
-      ERROR("NOT FOUND: CLBlast library. Please set CLBlast sdk directory with --with-clblast=/some/dir");
-  }
+//  if (CHECK_LIB("clblast.lib", "rindow_clblast", PHP_CLBLAST + '/lib')) {
+//      ADD_FLAG("LIBS_CLBLAST", "clblast.lib");
+//      ADD_FLAG("LDFLAGS", '/libpath:"\\"' + PHP_CLBLAST + '/lib' + '\\"" ');
+//  } else {
+//      ERROR("NOT FOUND: CLBlast library. Please set CLBlast sdk directory with --with-clblast=/some/dir");
+//  }
 
 }

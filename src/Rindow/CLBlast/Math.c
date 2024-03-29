@@ -414,120 +414,6 @@ static PHP_METHOD(Math, hadamard)
 /* }}} */
 
 /* Method Rindow\CLBlast\Math::
-    public function omatcopy(
-        int $order,
-        int $transA,
-        int $m,
-        int $n,
-        float $alpha,
-        Buffer $A, int $offsetA, int $ldA,
-        Buffer $B, int $offsetB, int $ldB,
-        CommandQueue $queue, EventList $event
-     ) : void
- {{{ */
-static PHP_METHOD(Math, omatcopy)
-{
-    zend_long order;
-    zend_long transA;
-    zend_long m;
-    zend_long n;
-    double alpha;
-    zval* a_obj_p;
-    zend_long offsetA;
-    zend_long ldA;
-    zval* b_obj_p;
-    zend_long offsetB;
-    zend_long ldB;
-    zval* queue_obj_p;
-    zval* event_obj_p=NULL;
-    php_rindow_opencl_buffer_t* bufferA;
-    php_rindow_opencl_buffer_t* bufferB;
-    php_rindow_opencl_command_queue_t* queue_obj;
-    php_rindow_opencl_event_list_t* event_obj;
-    CLBlastStatusCode status;
-    cl_event event;
-    cl_event *event_p=NULL;
-
-    ZEND_PARSE_PARAMETERS_START_EX(ZEND_PARSE_PARAMS_THROW, 12, 13)
-        Z_PARAM_LONG(order)
-        Z_PARAM_LONG(transA)
-        Z_PARAM_LONG(m)
-        Z_PARAM_LONG(n)
-        Z_PARAM_DOUBLE(alpha)
-        Z_PARAM_OBJECT(a_obj_p)  // Rindow\OpenCL\Buffer
-        Z_PARAM_LONG(offsetA)
-        Z_PARAM_LONG(ldA)
-        Z_PARAM_OBJECT(b_obj_p)  // Rindow\OpenCL\Buffer
-        Z_PARAM_LONG(offsetB)
-        Z_PARAM_LONG(ldB)
-        Z_PARAM_OBJECT(queue_obj_p)  // Rindow\OpenCL\CommandQueue
-        Z_PARAM_OPTIONAL
-        Z_PARAM_OBJECT_EX(event_obj_p,1,0)  // Rindow\OpenCL\EventList
-    ZEND_PARSE_PARAMETERS_END();
-
-    bufferA = Z_RINDOW_OPENCL_BUFFER_OBJ_P(a_obj_p);
-    if(php_rindow_clblast_assert_opencl_buffer_type(bufferA,"a")) {
-        return;
-    }
-    bufferB = Z_RINDOW_OPENCL_BUFFER_OBJ_P(b_obj_p);
-    if(php_rindow_clblast_assert_opencl_buffer_type(bufferB,"b")) {
-        return;
-    }
-    queue_obj = Z_RINDOW_OPENCL_COMMAND_QUEUE_OBJ_P(queue_obj_p);
-    if(php_rindow_clblast_assert_opencl_command_queue_type(queue_obj,"queue")) {
-        return;
-    }
-    if(event_obj_p && Z_TYPE_P(event_obj_p) == IS_OBJECT) {
-        event_obj = Z_RINDOW_OPENCL_EVENT_LIST_OBJ_P(event_obj_p);
-        if(php_rindow_clblast_assert_opencl_event_list_type(event_obj,"events")) {
-            return;
-        }
-        event_p = &event;
-    }
-
-    if(bufferA->dtype!=bufferB->dtype) {
-        zend_throw_exception(spl_ce_InvalidArgumentException, "Unmatch data type for A and B", 0);
-        return;
-    }
-
-    switch (bufferA->dtype) {
-        case php_interop_polite_math_matrix_dtype_float32:
-            status = CLBlastSomatcopy(
-                (CLBlastLayout)order,
-                (CLBlastTranspose)transA,
-                (size_t)m,(size_t)n,
-                (float)alpha,
-                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
-                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
-                &(queue_obj->command_queue), event_p);
-            break;
-        case php_interop_polite_math_matrix_dtype_float64:
-            status = CLBlastDomatcopy(
-                (CLBlastLayout)order,
-                (CLBlastTranspose)transA,
-                (size_t)m,(size_t)n,
-                (double)alpha,
-                bufferA->buffer, (size_t)offsetA, (size_t)ldA,
-                bufferB->buffer, (size_t)offsetB, (size_t)ldB,
-                &(queue_obj->command_queue), event_p);
-            break;
-        default:
-            zend_throw_exception(spl_ce_RuntimeException, "Unsupported data type.", 0);
-            return;
-    }
-    if(status!=CLBlastSuccess) {
-        zend_throw_exception_ex(spl_ce_RuntimeException, status, "CLBlasti?omatcopy error=%d", status);
-        return;
-    }
-
-    if(php_rindow_clblast_append_event(event_obj_p, event_p)) {
-        return;
-    }
-}
-/* }}} */
-
-
-/* Method Rindow\CLBlast\Math::
     public function im2col(
         int $kernel_mode,
         int $channels, int $height, int $width,
@@ -621,8 +507,8 @@ static PHP_METHOD(Math, im2col)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 im_buffer_obj->buffer, (size_t)im_offset,
                 col_buffer_obj->buffer, (size_t)col_offset,
@@ -633,8 +519,8 @@ static PHP_METHOD(Math, im2col)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 im_buffer_obj->buffer, (size_t)im_offset,
                 col_buffer_obj->buffer, (size_t)col_offset,
@@ -749,8 +635,8 @@ static PHP_METHOD(Math, col2im)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 col_buffer_obj->buffer, (size_t)col_offset,
                 im_buffer_obj->buffer, (size_t)im_offset,
@@ -761,8 +647,8 @@ static PHP_METHOD(Math, col2im)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 col_buffer_obj->buffer, (size_t)col_offset,
                 im_buffer_obj->buffer, (size_t)im_offset,
@@ -893,8 +779,8 @@ static PHP_METHOD(Math, convgemm)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 (size_t)num_kernels, (size_t)batch_count,
                 im_buffer_obj->buffer, (size_t)im_offset,
@@ -907,8 +793,8 @@ static PHP_METHOD(Math, convgemm)
                 (CLBlastKernelMode)kernel_mode,
                 (size_t)channels,(size_t)height,(size_t)width,
                 (size_t)kernel_h,(size_t)kernel_w,
-                (size_t)pad_h,(size_t)pad_h,
-                (size_t)stride_h,(size_t)stride_h,
+                (size_t)pad_h,(size_t)pad_w,        // ** CAUTION ** Blast has the bug.
+                (size_t)stride_h,(size_t)stride_w,  // pad_h&w, stride_h&w must be the same.
                 (size_t)dilation_h,(size_t)dilation_w,
                 (size_t)num_kernels, (size_t)batch_count,
                 im_buffer_obj->buffer, (size_t)im_offset,
@@ -1528,22 +1414,6 @@ ZEND_BEGIN_ARG_INFO_EX(ai_Math_hadamard, 0, 0, 13)
     ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(ai_Math_omatcopy, 0, 0, 12)
-    ZEND_ARG_INFO(0, order)
-    ZEND_ARG_INFO(0, transA)
-    ZEND_ARG_INFO(0, m)
-    ZEND_ARG_INFO(0, n)
-    ZEND_ARG_INFO(0, alpha)
-    ZEND_ARG_OBJ_INFO(0, a, Rindow\\OpenCL\\Buffer, 0)
-    ZEND_ARG_INFO(0, offsetA)
-    ZEND_ARG_INFO(0, ldA)
-    ZEND_ARG_OBJ_INFO(0, b, Rindow\\OpenCL\\Buffer, 0)
-    ZEND_ARG_INFO(0, offsetB)
-    ZEND_ARG_INFO(0, ldB)
-    ZEND_ARG_OBJ_INFO(0, queue, Rindow\\OpenCL\\CommandQueue, 0)
-    ZEND_ARG_OBJ_INFO(0, event, Rindow\\OpenCL\\EventList, 1)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(ai_Math_im2col, 0, 0, 17)
     ZEND_ARG_INFO(0, kernel_mode)
     ZEND_ARG_INFO(0, channels)
@@ -1689,7 +1559,6 @@ static zend_function_entry php_rindow_clblast_math_me[] = {
     PHP_ME(Math, imax,     ai_Math_imax,     ZEND_ACC_PUBLIC)
     PHP_ME(Math, imin,     ai_Math_imin,     ZEND_ACC_PUBLIC)
     PHP_ME(Math, hadamard, ai_Math_hadamard, ZEND_ACC_PUBLIC)
-    PHP_ME(Math, omatcopy, ai_Math_omatcopy, ZEND_ACC_PUBLIC)
     PHP_ME(Math, im2col,   ai_Math_im2col,   ZEND_ACC_PUBLIC)
     PHP_ME(Math, col2im,   ai_Math_col2im,   ZEND_ACC_PUBLIC)
     PHP_ME(Math, convgemm, ai_Math_convgemm, ZEND_ACC_PUBLIC)

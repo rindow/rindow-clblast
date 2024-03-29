@@ -1,5 +1,5 @@
 --TEST--
-Blas::axpyBatched
+Math::axpyBatched
 --SKIPIF--
 <?php
 if (!extension_loaded('rindow_clblast')) {

@@ -1,5 +1,5 @@
 --TEST--
-Blas::gemmBatched
+Math::gemmBatched
 --SKIPIF--
 <?php
 if (!extension_loaded('rindow_clblast')) {

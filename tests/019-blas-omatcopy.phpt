@@ -1,5 +1,5 @@
 --TEST--
-Math::omatcopy
+Blas::omatcopy
 --SKIPIF--
 <?php
 if (!extension_loaded('rindow_clblast')) {
@@ -37,9 +37,9 @@ $bufferB = new Rindow\OpenCL\Buffer($context,intval($m*$n*32/8),
     OpenCL::CL_MEM_READ_WRITE|OpenCL::CL_MEM_COPY_HOST_PTR,
     $hostBufferB);
 
-$math = new Rindow\CLBlast\Math();
+$blas = new Rindow\CLBlast\Blas();
 $events = new Rindow\OpenCL\EventList();
-$math->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
+$blas->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
     $bufferA,$offsetA=0,$ldA=$n,
     $bufferB,$offsetB=0,$ldB=$m,
     $queue,$events);
@@ -58,7 +58,7 @@ echo "SUCCESS\n";
 $events = new Rindow\OpenCL\EventList();
 $invalidBuffer = new \stdClass();
 try {
-    $math->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
+    $blas->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
         $invalidBuffer,$offsetA=0,$ldA=$n,
         $bufferB,$offsetB=0,$ldB=$m,
         $queue,$events);
@@ -66,7 +66,7 @@ try {
     echo "Invalid Buffer catch: ".get_class($e)."\n";
 }
 try {
-    $math->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
+    $blas->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
         $bufferA,$offsetA=0,$ldA=$n,
         $invalidBuffer,$offsetB=0,$ldB=$m,
         $queue,$events);
@@ -76,7 +76,7 @@ try {
 $events = new Rindow\OpenCL\EventList();
 $invalidQueue = new \stdClass();
 try {
-    $math->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
+    $blas->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
         $bufferA,$offsetA=0,$ldA=$n,
         $bufferB,$offsetB=0,$ldB=$m,
         $invalidQueue,$events);
@@ -86,7 +86,7 @@ try {
 $events = new Rindow\OpenCL\EventList();
 $invalidEvents = new \stdClass();
 try {
-    $math->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
+    $blas->omatcopy(BLAS::RowMajor,BLAS::Trans,$m,$n,$alpha,
         $bufferA,$offsetA=0,$ldA=$n,
         $bufferB,$offsetB=0,$ldB=$m,
         $queue,$invalidEvents);

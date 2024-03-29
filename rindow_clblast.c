@@ -16,6 +16,11 @@
 #include <Interop/Polite/Math/Matrix.h>
 #include "php_rindow_clblast.h"
 
+#if _MSC_VER
+extern int rindow_load_clblast_dll();
+extern void rindow_unload_clblast_dll();
+#endif
+
 /* For compatibility with older PHP versions */
 #ifndef ZEND_PARSE_PARAMETERS_NONE
 #define ZEND_PARSE_PARAMETERS_NONE() \
@@ -118,8 +123,23 @@ PHP_MINFO_FUNCTION(rindow_clblast)
 
 PHP_MINIT_FUNCTION(rindow_clblast)
 {
+#if _MSC_VER
+    int rc=rindow_load_clblast_dll();
+    if(rc!=0) {
+        rindow_unload_clblast_dll();
+        return FAILURE;
+    }
+#endif
     php_rindow_clblast_blas_init_ce(INIT_FUNC_ARGS_PASSTHRU);
     php_rindow_clblast_math_init_ce(INIT_FUNC_ARGS_PASSTHRU);
+    return SUCCESS;
+}
+
+PHP_MSHUTDOWN_FUNCTION(rindow_clblast)
+{
+#if _MSC_VER
+    rindow_unload_clblast_dll();
+#endif
     return SUCCESS;
 }
 
@@ -130,7 +150,7 @@ zend_module_entry rindow_clblast_module_entry = {
     "rindow_clblast",					/* Extension name */
     NULL,			                    /* zend_function_entry */
     PHP_MINIT(rindow_clblast),			/* PHP_MINIT - Module initialization */
-    NULL,							    /* PHP_MSHUTDOWN - Module shutdown */
+    PHP_MSHUTDOWN(rindow_clblast),      /* PHP_MSHUTDOWN - Module shutdown */
     PHP_RINIT(rindow_clblast),			/* PHP_RINIT - Request initialization */
     NULL,							    /* PHP_RSHUTDOWN - Request shutdown */
     PHP_MINFO(rindow_clblast),			/* PHP_MINFO - Module info */
