@@ -24,7 +24,7 @@ Requirements
 - LinearBuffer implements for interop-phpobjects (rindow_openblas etc.)
 - rindow_opencl PHP extension 0.1.4
 - OpenCL 1.1/1.2 drivers/libraries.
-- Windows 10 or Linux (Ubuntu) 20.04 or later
+- Windows 10 or Linux (Ubuntu 20.04, Debian 12) or later
 
 AMD GPU/APU drivers for windows are including OpenCL drivers.
 Intel Integrated GPU for windows are including OpenCL drivers.
@@ -92,10 +92,10 @@ Install gcc development environment and opencl library. Then install the php dev
 ```shell
 $ sudo apt install build-essential autoconf automake libtool bison re2c
 $ sudo apt install pkg-config
-$ sudo apt install php8.1-dev
+$ sudo apt install phpX.X-dev (ex. php8.1-dev)
 $ sudo apt install ocl-icd-opencl-dev
-$ sudo apt install ./rindow-openblas-php8.1_X.X.X-X+ubuntuXX.XX_amd64.deb
-$ sudo apt install ./rindow-opencl-php8.1_X.X.X-X+ubuntuXX.XX_amd64.deb
+$ sudo apt install ./rindow-openblas-phpX.X_X.X.X_amd64.deb
+$ sudo apt install ./rindow-opencl-phpX.X_X.X.X_amd64.deb
 ```
 
 ### Build
@@ -105,13 +105,25 @@ Run the target php version of phpize and build.
 $ git clone https://github.com/rindow/rindow-opencl
 $ git clone https://github.com/rindow/rindow-clblast
 $ cd rindow-clblast
+```
+
+If you use Ubuntu 22.04 or Debian 12, You can install libclblast from distribution package.
+```shell
+$ sudo apt install libclblast-dev
+```
+If you use Ubuntu 20.04 or Debian 11, You have to download github.com and make a deb file, and then install.
+```shell
 $ sh ./clblast-packdeb.sh
-$ sudo apt install ./clblast_X.X.X-X+ubuntuXX.XX_amd64.deb
+$ sudo apt install ./clblast_X.X.X_amd64.deb
+```
+
+Next, Setup the environment and build.
+```shell
 $ composer update
-$ phpize8.1
+$ phpizeX.X (ex. phpize8.1)
 $ mv build/Makefile.global build/Makefile.global.orig
 $ sed -f Makefile.global.patch < build/Makefile.global.orig > build/Makefile.global
-$ ./configure --enable-rindow_clblast --with-rindow_opencl=../rindow-opencl --with-php-config=php-config8.1
+$ ./configure --enable-rindow_clblast --with-rindow_opencl=../rindow-opencl --with-php-config=php-configX.X (ex. php-config8.1)
 $ make clean
 $ make
 $ make test
@@ -121,6 +133,9 @@ $ make test
 
 ```shell
 $ sudo make install
+or
+$ sh ./packaging.sh X.X (ex. sh ./packaging.sh 8.1)
+$ suto apt install ./rindow-clblast-phpX.X_X.X.X_amd64.deb (ex. ./rindow-clblast-php8.1_...)
 ```
 Add the "extension=rindow_clblast" entry to php.ini
 

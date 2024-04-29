@@ -43,3 +43,4 @@ x64
 composer.lock
 *.deb
 pkgwork/
+phpunit/.phpunit.*
